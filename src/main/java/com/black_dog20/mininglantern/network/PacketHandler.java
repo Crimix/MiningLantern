@@ -2,6 +2,8 @@ package com.black_dog20.mininglantern.network;
 
 import com.black_dog20.mininglantern.network.message.MessageSyncLanternCapability;
 import com.black_dog20.mininglantern.network.message.MessageSyncLanternCapabilityTracking;
+import com.black_dog20.mininglantern.network.message.MessageUpdateHasLantern;
+import com.black_dog20.mininglantern.network.message.MessageUpdateLanternState;
 import com.black_dog20.mininglantern.reference.Reference;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -16,6 +18,8 @@ public class PacketHandler {
 	public static void init() {
 		network.registerMessage(MessageSyncLanternCapability.class, MessageSyncLanternCapability.class, 0, Side.CLIENT);
 		network.registerMessage(MessageSyncLanternCapabilityTracking.class, MessageSyncLanternCapabilityTracking.class, 1, Side.CLIENT);
+		network.registerMessage(MessageUpdateLanternState.class, MessageUpdateLanternState.class, 2, Side.SERVER);
+		network.registerMessage(MessageUpdateHasLantern.class, MessageUpdateHasLantern.class, 3, Side.SERVER);
 	}
 
 }

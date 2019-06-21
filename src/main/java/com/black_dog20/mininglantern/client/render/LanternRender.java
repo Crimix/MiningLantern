@@ -2,6 +2,7 @@ package com.black_dog20.mininglantern.client.render;
 
 import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
+import com.black_dog20.mininglantern.init.ModItems;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,7 +38,7 @@ public class LanternRender implements LayerRenderer<EntityPlayer>{
 				GlStateManager.translate(-0.055F, 5.3F, -1.4F);
 			}
 			GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
-				Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Items.ACACIA_BOAT) , ItemCameraTransforms.TransformType.FIXED);
+				Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(ModItems.lantern) , ItemCameraTransforms.TransformType.FIXED);
 			GlStateManager.popMatrix();
 		}
 		

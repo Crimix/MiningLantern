@@ -2,10 +2,12 @@ package com.black_dog20.mininglantern.proxies;
 
 import com.black_dog20.mininglantern.client.render.LanternRender;
 import com.black_dog20.mininglantern.client.settings.Keybindings;
+import com.black_dog20.mininglantern.handler.KeyInputEventHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,8 +31,8 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public boolean isSinglePlayer() {
-		return Minecraft.getMinecraft().isSingleplayer();
+	public void registerKeyInputHandler() {
+		MinecraftForge.EVENT_BUS.register(new KeyInputEventHandler());
 	}
 	
 	@Override

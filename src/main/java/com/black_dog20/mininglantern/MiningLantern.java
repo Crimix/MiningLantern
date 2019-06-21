@@ -2,12 +2,17 @@ package com.black_dog20.mininglantern;
 
 import org.apache.logging.log4j.Logger;
 
-import com.black_dog20.mininglantern.event.LightHandler;
+import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
+import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
+import com.black_dog20.mininglantern.capability.LanternCapabilityStorage;
+import com.black_dog20.mininglantern.handler.CapabilityHandler;
+import com.black_dog20.mininglantern.handler.LightHandler;
 import com.black_dog20.mininglantern.network.PacketHandler;
 import com.black_dog20.mininglantern.proxies.IProxy;
 import com.black_dog20.mininglantern.reference.Reference;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,12 +36,16 @@ public class MiningLantern {
 		PacketHandler.init();
 		Proxy.registerKeyBindings();
 		Proxy.registerRendersPreInit();
+		PacketHandler.init();
+		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 		logger.info("Pre Initialization Complete!");
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
-
+		Proxy.registerKeyInputHandler();
+		CapabilityManager.INSTANCE.register(ILanternCapabilityHandler.class, new LanternCapabilityStorage(), new LanternCapabilityHandler.Factory());
+		Proxy.registerRendersInit();
 		logger.info("Initialization Complete!");
 }
 

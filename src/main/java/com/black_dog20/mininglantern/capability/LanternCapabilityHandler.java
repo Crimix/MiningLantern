@@ -31,8 +31,8 @@ public class LanternCapabilityHandler implements ILanternCapabilityHandler, ICap
 	}
 	
 	@Override
-	public void setHasLantern(boolean hasMagnetOn) {
-		hasLantern = hasMagnetOn;
+	public void setHasLantern(boolean hasLantern) {
+		this.hasLantern = hasLantern;
 		dirty = true;
 	}
 	
@@ -42,8 +42,8 @@ public class LanternCapabilityHandler implements ILanternCapabilityHandler, ICap
 	}
 	
 	@Override
-	public void setHasLanternOn(boolean hasMagnetOn) {
-		lanternOn = hasMagnetOn;
+	public void setHasLanternOn(boolean hasLanternOn) {
+		lanternOn = hasLanternOn;
 		dirty = true;
 	}
 
@@ -80,8 +80,11 @@ public class LanternCapabilityHandler implements ILanternCapabilityHandler, ICap
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return capability == CAP ? CAP.<T> cast(this) : null;
-
+		try {
+			return capability == CAP ? CAP.<T> cast(this) : null;
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	@Override

@@ -110,7 +110,7 @@ processResources
 curseforge {
   apiKey = priv.apiKey
   project {
-    id = ''
+    id = '555'
     relations {
         requiredLibrary 'albedo'
     }

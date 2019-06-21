@@ -9,12 +9,11 @@ public interface IProxy {
 
 	void registerKeyBindings();
 	
-	boolean isSinglePlayer();
+	void registerKeyInputHandler();
 
 	EntityPlayer getPlayerFromMessageContext(MessageContext ctx);
 
 	EntityPlayer getPlayerByIDFromMessageContext(int id, MessageContext ctx);
 
 	void registerRendersInit();
-
 }

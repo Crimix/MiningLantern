@@ -1,4 +1,7 @@
-package com.black_dog20.mininglantern.event;
+package com.black_dog20.mininglantern.handler;
+
+import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
+import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
 
 import elucent.albedo.event.RenderEntityEvent;
 import elucent.albedo.lighting.Light;
@@ -23,8 +26,10 @@ public class LightHandler {
         if (world == null) return;
         Entity e = event.getEntity();
         if(!(e instanceof EntityPlayer)) return;
+        EntityPlayer player = (EntityPlayer)e;
+        ILanternCapabilityHandler lch = LanternCapabilityHandler.instanceFor(player);
 
-        if(!e.equals(Minecraft.getMinecraft().player)) {
+        if(!e.equals(Minecraft.getMinecraft().player) && lch != null && lch.getHasLantern() && lch.getHasLanternOn()) {
         	Light l = Light.builder().color(255, 255, 204, .005F).pos(e).radius(16F).build();
         	LightManager.lights.add(l);
         }
@@ -34,7 +39,10 @@ public class LightHandler {
 	@SubscribeEvent(priority=EventPriority.HIGH)
 	public void onRenderWorld(RenderWorldLastEvent event){
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
-    	Light l = Light.builder().color(255, 255, 204, .005F).pos(player).radius(16F).build();
-    	LightManager.lights.add(l);
+		ILanternCapabilityHandler lch = LanternCapabilityHandler.instanceFor(player);
+		if(lch != null && lch.getHasLantern() && lch.getHasLanternOn()) {
+        	Light l = Light.builder().color(255, 255, 204, .005F).pos(player).radius(16F).build();
+        	LightManager.lights.add(l);
+        }
 	}
 }
