@@ -1,0 +1,146 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+		maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+      		url "https://plugins.gradle.org/m2/"
+    	}
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.10'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.matthewprenger.cursegradle'
+//Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
+
+ext.priv = parseConfig(file('private.properties'))
+
+version = version_major + '.' + version_minor + '.' + version_patch
+group = "${mod_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = mod_archivesBaseName + "-" + mcversion
+
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+minecraft {
+    version = mcversion + "-" + forge_version
+    runDir = "eclipse/assets"	
+    mappings = mcp_mappings
+    
+    
+    replace "@VERSION@", project.version
+    replaceIn "src/main/java/com/black_dog20/servertabinfo/reference/Reference.java"
+    clientJvmArgs += "-Dfml.coreMods.load=albedo.asm.FMLPlugin"
+}
+
+repositories {
+  maven {
+    // location of the maven that hosts JEI files
+    name = "Progwml6 maven"
+    url = "http://dvs1.progwml6.com/files/maven"
+  }
+  maven {
+    // location of a maven mirror for JEI files, as a fallback
+    name = "ModMaven"
+    url = "modmaven.k-4u.nl"
+  }
+  maven {
+	name = "Curse"
+	url = "https://minecraft.curseforge.com/api/maven/"
+  }
+}
+
+dependencies {
+
+    // you may put jars on which you depend on in ./libs
+    // or you may define them like so..
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
+      
+    // real examples
+    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
+    // except that these dependencies get remapped to your current MCP mappings
+    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    compile "albedo:albedo:1.12.2:1.1.0"
+
+    // for more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mc_version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+curseforge {
+  apiKey = priv.apiKey
+  project {
+    id = ''
+    relations {
+        requiredLibrary 'albedo'
+    }
+    changelogType = 'markdown'
+	changelog = file('changelog.txt')
+    releaseType = 'release'
+    addGameVersion 'Java 8'
+    addGameVersion '1.12'
+    addGameVersion '1.12.1'
+    addGameVersion '1.12.2'
+  }
+}
+
+task clearChangelog() {
+	doLast{
+		clearFile(file('changelog.txt'))
+	}
+}
+
+
+def clearFile(File f) {
+    f.withWriter  {
+    	writer -> writer.write('')
+    }
+}
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
