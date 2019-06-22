@@ -1,4 +1,12 @@
+//Items
 item.mininglantern:mininglantern.name=Mining Lantern
+
+
+//Item tooltips
+tooltip.mininglantern:activate=Press %1$s%2$s%3$s to toggle the light on/off
+tooltip.mininglantern:loaded=Albedo is §aloaded§7, lights will work! 
+tooltip.mininglantern:notloaded=Albedo is §cnot loaded§r, lights will not work! 
+
 
 //Config
 config.mininglantern=Mining Lantern

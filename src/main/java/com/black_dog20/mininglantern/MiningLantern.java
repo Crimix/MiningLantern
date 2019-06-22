@@ -13,6 +13,7 @@ import com.black_dog20.mininglantern.reference.Reference;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -52,6 +53,7 @@ public class MiningLantern {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		logger.info("Post Initialization Complete!");
-		MinecraftForge.EVENT_BUS.register(new LightHandler());
+		if(Loader.isModLoaded("albedo"))
+			MinecraftForge.EVENT_BUS.register(new LightHandler());
 	}
 }
