@@ -62,6 +62,7 @@ public class ItemLantern extends ItemBase implements IBauble {
 		});
 	}
 	
+	@Optional.Method(modid = "baubles")
 	@Override
 	public BaubleType getBaubleType(ItemStack itemstack) {
 		return BaubleType.TRINKET;

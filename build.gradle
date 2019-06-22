@@ -63,7 +63,7 @@ repositories {
 
 dependencies {
 	compile "albedo:albedo:1.12.2:${albedo_version}"
-	runtime "baubles:Baubles:1.12:${baubles_version}"
+	compile "baubles:Baubles:1.12:${baubles_version}"
 }
 
 processResources
