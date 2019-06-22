@@ -62,6 +62,8 @@ repositories {
 }
 
 dependencies {
+	deobfProvided  "mezz.jei:jei_${mcversion}:${jei_version}:api"
+	runtime "mezz.jei:jei_${mcversion}:${jei_version}"
 	compile "albedo:albedo:1.12.2:${albedo_version}"
 	compile "baubles:Baubles:1.12:${baubles_version}"
 }
