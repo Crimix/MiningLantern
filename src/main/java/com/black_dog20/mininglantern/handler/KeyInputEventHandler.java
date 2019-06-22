@@ -16,7 +16,6 @@ public class KeyInputEventHandler {
 	@SubscribeEvent
 	public void handleKeyInputEvent(InputEvent.KeyInputEvent event) {
 		if(Keybindings.TOGGLE_LIGHT.isPressed()){
-			System.out.println("s");
 			PacketHandler.network.sendToServer(new MessageUpdateLanternState());
 		}
 	}

@@ -1,3 +1,11 @@
+item.mininglantern:mininglantern.name=Mining Lantern
+
+//Config
+config.mininglantern=Mining Lantern
+config.mininglantern.otherlight=See others light
+config.mininglantern.otherlight.tooltip=Whether you want to see the light emitted by other players' lanterns.
+
+
 //Keybindings
 keys.mininglantern.category=Mining Lantern
 keys.mininglantern.light=Toggle lantern on/off
