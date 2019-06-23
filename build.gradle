@@ -15,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.10'
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.3.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -92,9 +92,10 @@ curseforge {
   apiKey = priv.apiKey
   project {
     id = '325034'
-    relations {
-        requiredLibrary 'albedo'
-    }
+      relations {
+        requiredDependency 'albedo'
+        optionalDependency 'baubles'
+      }
     changelogType = 'markdown'
 	changelog = file('changelog.txt')
     releaseType = 'release'
