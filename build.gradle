@@ -40,7 +40,7 @@ minecraft {
     
     
     replace "@VERSION@", project.version
-    replaceIn "src/main/java/com/black_dog20/servertabinfo/reference/Reference.java"
+    replaceIn "src/main/java/com/black_dog20/mininglantern/reference/Reference.java"
     clientJvmArgs += "-Dfml.coreMods.load=albedo.asm.FMLPlugin"
 }
 
@@ -91,7 +91,7 @@ processResources
 curseforge {
   apiKey = priv.apiKey
   project {
-    id = '555'
+    id = '325034'
     relations {
         requiredLibrary 'albedo'
     }
