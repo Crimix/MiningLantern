@@ -8,6 +8,6 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class Keybindings {
 	
-	public static KeyBinding TOGGLE_LIGHT = new KeyBinding(Names.Keys.TOGGLE_LIGHT, Keyboard.KEY_L, Names.Keys.CATEGORY);
+	public static KeyBinding TOGGLE_LIGHT = new KeyBinding(Names.Keys.TOGGLE_LIGHT, Keyboard.KEY_V, Names.Keys.CATEGORY);
 
 }
