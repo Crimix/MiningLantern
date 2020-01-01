@@ -1,4 +1,4 @@
-[![](https://cf.way2muchnoise.eu/full_mining-lantern_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/mining-lantern)
+[![](http://cf.way2muchnoise.eu/full_mining-lantern_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/mining-lantern)
 # MiningLantern
 [Mining Lantern](https://minecraft.curseforge.com/projects/mining-lantern) is a small mod that adds only one item to the game.
 A mining lantern that can emit light from the player that follows the player.
