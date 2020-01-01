@@ -4,13 +4,12 @@ import com.black_dog20.mininglantern.client.settings.Keybindings;
 import com.black_dog20.mininglantern.network.PacketHandler;
 import com.black_dog20.mininglantern.network.message.MessageUpdateLanternState;
 
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class KeyInputEventHandler {
 
 	@SubscribeEvent

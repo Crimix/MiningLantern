@@ -1,59 +1,70 @@
 package com.black_dog20.mininglantern;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityStorage;
+import com.black_dog20.mininglantern.config.Config;
 import com.black_dog20.mininglantern.handler.CapabilityHandler;
 import com.black_dog20.mininglantern.handler.LightHandler;
 import com.black_dog20.mininglantern.network.PacketHandler;
+import com.black_dog20.mininglantern.proxies.ClientProxy;
 import com.black_dog20.mininglantern.proxies.IProxy;
+import com.black_dog20.mininglantern.proxies.ServerProxy;
 import com.black_dog20.mininglantern.reference.Reference;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, acceptedMinecraftVersions = Reference.MC_VERSIONS, dependencies = Reference.DEPENDENCIES)
+@Mod(Reference.MOD_ID)
 public class MiningLantern {
 
-	@Mod.Instance(Reference.MOD_ID)
-	public static MiningLantern instance = new MiningLantern();
-	public static Logger logger;
-	public static boolean modOnServer = false;
-
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
+	public static MiningLantern instance;
+	public static final Logger LOGGER = LogManager.getLogger();
 	public static IProxy Proxy;
+	
+	public MiningLantern() {
+		instance = this;
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        Proxy = DistExecutor.runForDist(()->()->new ClientProxy(), ()->()->new ServerProxy());
+        
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::config);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+        
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		logger = event.getModLog();
-		PacketHandler.init();
-		Proxy.registerKeyBindings();
-		Proxy.registerRendersPreInit();
+	private void setup(FMLCommonSetupEvent event) {
 		PacketHandler.init();
 		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
-		logger.info("Pre Initialization Complete!");
-	}
-
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent event) {
-		Proxy.registerKeyInputHandler();
 		CapabilityManager.INSTANCE.register(ILanternCapabilityHandler.class, new LanternCapabilityStorage(), new LanternCapabilityHandler.Factory());
-		Proxy.registerRendersInit();
-		logger.info("Initialization Complete!");
-}
-
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		logger.info("Post Initialization Complete!");
-		if(Loader.isModLoaded("albedo"))
+		if(ModList.get().isLoaded("albedo"))
 			MinecraftForge.EVENT_BUS.register(new LightHandler());
+		LOGGER.info("Setup Complete!");
 	}
+	
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        // do something that can only be done on the client
+		Proxy.registerKeyBindings();
+		Proxy.registerRendersPreInit();
+		Proxy.registerKeyInputHandler();
+		Proxy.registerRendersInit();
+    }
+    
+    public void config(ModConfig.ModConfigEvent event)
+    {
+        if (event.getConfig().getSpec() == Config.SPEC)
+            Config.load();
+    }
 }

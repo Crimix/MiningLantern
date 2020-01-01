@@ -1,21 +1,19 @@
 package com.black_dog20.mininglantern.network.message;
 
-import com.black_dog20.mininglantern.MiningLantern;
+import java.util.function.Supplier;
+
 import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageSyncLanternCapability implements IMessage, IMessageHandler<MessageSyncLanternCapability, IMessage>{
+public class MessageSyncLanternCapability {
 
-	private NBTTagCompound nbt;
+	public NBTTagCompound nbt;
 	
 	public MessageSyncLanternCapability() {}
 	
@@ -24,27 +22,26 @@ public class MessageSyncLanternCapability implements IMessage, IMessageHandler<M
 	}
 	
 	
-	@Override
-	public IMessage onMessage(MessageSyncLanternCapability message, MessageContext ctx) {
-		Minecraft.getMinecraft().addScheduledTask(() -> {
-			EntityPlayer player = MiningLantern.Proxy.getPlayerFromMessageContext(ctx);
+	public static void onMessage(MessageSyncLanternCapability message, Supplier<NetworkEvent.Context> context) {
+		Minecraft.getInstance().addScheduledTask(() -> {
+			EntityPlayer player = context.get().getSender();
 			ILanternCapabilityHandler mh = LanternCapabilityHandler.instanceFor(player);
 			if(mh != null){
 				mh.readFromNBT(message.nbt);
 			}
 		});
-		return null;
+		context.get().setPacketHandled(true);
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		nbt = ByteBufUtils.readTag(buf);
+	public static MessageSyncLanternCapability fromBytes(PacketBuffer buf) {
+		MessageSyncLanternCapability res = new MessageSyncLanternCapability();
+		res.nbt = buf.readCompoundTag();
+		return res;
 		
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeTag(buf, nbt);
+	public void toBytes(PacketBuffer buf) {
+		buf.writeCompoundTag(nbt);
 	}
 
 }

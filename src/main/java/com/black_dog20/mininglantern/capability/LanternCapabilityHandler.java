@@ -1,23 +1,23 @@
 package com.black_dog20.mininglantern.capability;
 
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import com.black_dog20.mininglantern.network.PacketHandler;
 import com.black_dog20.mininglantern.network.message.MessageSyncLanternCapability;
-import com.black_dog20.mininglantern.network.message.MessageSyncLanternCapabilityTracking;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor.PacketTarget;
 
 public class LanternCapabilityHandler implements ILanternCapabilityHandler, ICapabilitySerializable<NBTTagCompound> {
-
-	public static final int SIZE = 29;
 	
 	@CapabilityInject(ILanternCapabilityHandler.class) 
 	public static final Capability<ILanternCapabilityHandler> CAP = null;
@@ -61,30 +61,23 @@ public class LanternCapabilityHandler implements ILanternCapabilityHandler, ICap
 	@Override
 	public void updateClient(EntityPlayer player){
 		if(!player.world.isRemote && dirty){
-			PacketHandler.network.sendTo(new MessageSyncLanternCapability(this), (EntityPlayerMP) player);
-			((WorldServer) player.world).getEntityTracker().sendToTracking(player, PacketHandler.network.getPacketFrom(new MessageSyncLanternCapabilityTracking(this, player)));
+			
+			
+			PacketTarget dist = PacketDistributor.TRACKING_ENTITY_AND_SELF.with((Supplier<Entity>) player);
+			PacketHandler.network.send(dist, new MessageSyncLanternCapability(this));
 			dirty = false;
 		}
 	}
 	
 	public static ILanternCapabilityHandler instanceFor(EntityPlayer player) { 
-		return player.getCapability(CAP, null); 
+		return player.getCapability(CAP, null).orElse(null); 
 	}
 
 	
-	
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return capability == CAP;
-	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		try {
-			return capability == CAP ? CAP.<T> cast(this) : null;
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public <T> LazyOptional<T> getCapability(Capability<T> capability, EnumFacing facing) {
+		return CAP.orEmpty(capability, LazyOptional.of(() -> this));
 	}
 
 	@Override
