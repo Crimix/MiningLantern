@@ -35,10 +35,9 @@ compileJava {
 
 minecraft {
     version = mcversion + "-" + forge_version
-    runDir = "eclipse/assets"	
+    runDir = "eclipse/assets"
     mappings = mcp_mappings
-    
-    
+
     replace "@VERSION@", project.version
     replaceIn "src/main/java/com/black_dog20/mininglantern/reference/Reference.java"
     clientJvmArgs += "-Dfml.coreMods.load=albedo.asm.FMLPlugin"
@@ -59,6 +58,9 @@ repositories {
 	name = "Curse"
 	url = "https://minecraft.curseforge.com/api/maven/"
   }
+    maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
@@ -66,6 +68,8 @@ dependencies {
 	runtime "mezz.jei:jei_${mcversion}:${jei_version}"
 	compile "albedo:albedo:1.12.2:${albedo_version}"
 	compile "baubles:Baubles:1.12:${baubles_version}"
+    compile "curse.maven:darknesslib:2892127"
+    compile "curse.maven:grue:2912661"
 }
 
 processResources

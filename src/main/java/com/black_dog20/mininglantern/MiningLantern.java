@@ -1,16 +1,14 @@
 package com.black_dog20.mininglantern;
 
-import org.apache.logging.log4j.Logger;
-
 import com.black_dog20.mininglantern.capability.ILanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityHandler;
 import com.black_dog20.mininglantern.capability.LanternCapabilityStorage;
+import com.black_dog20.mininglantern.compatibility.Compatibility;
 import com.black_dog20.mininglantern.handler.CapabilityHandler;
 import com.black_dog20.mininglantern.handler.LightHandler;
 import com.black_dog20.mininglantern.network.PacketHandler;
 import com.black_dog20.mininglantern.proxies.IProxy;
 import com.black_dog20.mininglantern.reference.Reference;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Loader;
@@ -19,6 +17,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, acceptedMinecraftVersions = Reference.MC_VERSIONS, dependencies = Reference.DEPENDENCIES)
 public class MiningLantern {
@@ -55,5 +54,6 @@ public class MiningLantern {
 		logger.info("Post Initialization Complete!");
 		if(Loader.isModLoaded("albedo"))
 			MinecraftForge.EVENT_BUS.register(new LightHandler());
+		Compatibility.init();
 	}
 }
