@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mininglantern:item/mining_lantern"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "mininglantern:state": 0.0
+      },
+      "model": "mininglantern:item/mining_lanternoff"
+    }
+  ]
+}

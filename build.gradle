@@ -14,11 +14,12 @@ buildscript {
     	}
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.3.0'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.matthewprenger.cursegradle'
 //Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
 
@@ -26,21 +27,61 @@ ext.priv = parseConfig(file('private.properties'))
 
 version = version_major + '.' + version_minor + '.' + version_patch
 group = "${mod_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = mod_archivesBaseName + "-" + mcversion
+archivesBaseName = mod_archivesBaseName + "-" + mc_version
 
-sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+sourceSets {
+    main.resources.srcDirs += 'src/main/generated_resources'
 }
 
 minecraft {
-    version = mcversion + "-" + forge_version
-    runDir = "eclipse/assets"
-    mappings = mcp_mappings
+    mappings channel: 'snapshot', version: "${mcp_mappings}"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    replace "@VERSION@", project.version
-    replaceIn "src/main/java/com/black_dog20/mininglantern/reference/Reference.java"
-    clientJvmArgs += "-Dfml.coreMods.load=albedo.asm.FMLPlugin"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client = {
+            workingDirectory project.file('eclipse/assets')
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            mods {
+                mininglantern {
+                    source sourceSets.main
+                }
+            }
+        }
+        server = {
+            workingDirectory project.file('eclipse/assets')
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            mods {
+                mininglantern {
+                    source sourceSets.main
+                }
+            }
+        }
+        data {
+            workingDirectory project.file('eclipse/assets')
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'mininglantern', '--all', '--output', file("src/main/generated_resources"), '--existing', file('src/main/resources/')
+            mods {
+                mininglantern {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 repositories {
@@ -64,63 +105,47 @@ repositories {
 }
 
 dependencies {
-	deobfProvided  "mezz.jei:jei_${mcversion}:${jei_version}:api"
-	runtime "mezz.jei:jei_${mcversion}:${jei_version}"
-	compile "albedo:albedo:1.12.2:${albedo_version}"
-	compile "baubles:Baubles:1.12:${baubles_version}"
-    compile "curse.maven:darknesslib:2892127"
-    compile "curse.maven:grue:2912661"
+    minecraft([
+            group  : "${project.forge_group}",
+            name   : "forge",
+            version: "${project.mc_version}-${project.forge_version}"
+    ])
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    compileOnly fg.deobf("curse.maven:curios:${curios_version}")
+    runtimeOnly fg.deobf("curse.maven:curios:${curios_version}")
+    compileOnly fg.deobf("curse.maven:hyper-lighting-colored-light-core:${hyperlighting_version}")
+    runtimeOnly fg.deobf("curse.maven:hyper-lighting-colored-light-core:${hyperlighting_version}")
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mc_version
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+jar {
+    manifest {
+        attributes(["Specification-Title": "mininglantern",
+                    "Specification-Vendor": "black_dog20",
+                    "Specification-Version": "1",  // We are version 1 of ourselves
+                    "Implementation-Title": "Mining Lantern",
+                    "Implementation-Version": "${version}",
+                    "Implementation-Vendor" :"black_dog20",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
 }
+
 
 curseforge {
   apiKey = priv.apiKey
   project {
-    id = '325034'
+      id = '325034'
+      changelogType = 'markdown'
+      changelog = 'As always find the changelog here [CHANGELOG](https://github.com/Crimix/MiningLantern/blob/1.14.4/CHANGELOG.md)'
+      releaseType = 'release'
+      addGameVersion 'Forge'
+      addGameVersion 'Java 8'
+      addGameVersion '1.14.4'
       relations {
-        requiredDependency 'albedo'
-        optionalDependency 'baubles'
+          requiredDependency 'hyper-lighting-colored-light-core'
+          optionalDependency 'curios'
       }
-    changelogType = 'markdown'
-	changelog = file('changelog.txt')
-    releaseType = 'release'
-    addGameVersion 'Java 8'
-    addGameVersion '1.12'
-    addGameVersion '1.12.1'
-    addGameVersion '1.12.2'
   }
-}
-
-task clearChangelog() {
-	doLast{
-		clearFile(file('changelog.txt'))
-	}
-}
-
-
-def clearFile(File f) {
-    f.withWriter  {
-    	writer -> writer.write('')
-    }
 }
 
 def parseConfig(File config) {

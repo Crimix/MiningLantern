@@ -1,0 +1,7 @@
+{
+  "item.mininglantern.mining_lantern": "Mining Lantern",
+  "itemGroup.mininglantern": "Mining Lantern",
+  "keys.mininglantern.category": "Mining Lantern",
+  "keys.mininglantern.light": "Toggle lantern on/off",
+  "tooltip.mininglantern:activate": "Press %s to toggle the light on/off"
+}

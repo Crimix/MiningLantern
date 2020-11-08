@@ -1,0 +1,40 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/Crimix/MiningLantern/issues"
+
+
+[[mods]]
+modId="mininglantern"
+authors="black_dog20"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/mining-lantern"
+version="${file.jarVersion}"
+displayName="Mining Lantern"
+updateJSONURL="https://raw.githubusercontent.com/Crimix/MiningLantern/1.14.4/update.json"
+logoFile="mininglantern-logo.png"
+credits="To all my friends for putting up with me breaking the server multiple times during testing"
+description='''Light it up'''
+
+[[dependencies.mininglantern]]
+    modId="forge"
+    mandatory=true
+    versionRange="[28,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.mininglantern]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14.4,]"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.mininglantern]]
+    modId="hypcore"
+    mandatory=true
+    versionRange="[1.0,)"
+    ordering="BEFORE"
+    side="BOTH"
+[[dependencies.mininglantern]]
+    modId="curios"
+    mandatory=false
+    versionRange="[1.0.6,)"
+    ordering="BEFORE"
+    side="BOTH"
